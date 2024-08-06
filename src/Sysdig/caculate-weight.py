@@ -3,8 +3,8 @@ from numpy import tile
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
-from scipy.sparse.construct import random
-from scipy.sparse.linalg.eigen.arpack import eigsh
+from scipy.sparse import random
+from scipy.sparse.linalg import eigsh
 import sys
 import torch
 import torch.nn as nn

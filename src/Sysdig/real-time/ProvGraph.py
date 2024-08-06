@@ -51,7 +51,7 @@ class ProvGraph(object):
             self.attack_process = set(['fe46ff4b0dd67dc0a974430208331227', 'e14d9cbf5da65c007c4d8708f53b9c2f', '83fe3bf44cf67fb94e258c9396fbe188', 'cd100288b92b5e826dc7b79082398b29', 'c00408939cf270d5a3a29550fdba87d5', '5444a68c94bd0a75afb76cfdc07b14d2', 'e5e1285bbb6611731ccf18d2207a4aff', '7c87efd4610605689d6ba3c02ad75c8f', '5c09e49f4f790f73687a231103893d13', '5fcf1988f6ec204bed510491a9cff2fe', '9429bacd8424a21ec9df2a1b448252cc',\
             'f4c37a52e9572e89f86b0811b4fb326f','526f43c80ba193bc3dabc6374baad92a','b9ced8f1e981fe2b19ba4f0c74c8eaaa','eca0112ba004a46862c9d957b9dc2222','b8fa95f2d2d39924b045b41cf5991d3f','e0b19819ffbadb37ba779ebe29085e8b','cfcc3cb29e2e6cfa8ba1f48eeb40a69d','526f43c80ba193bc3dabc6374baad92a','894232a1faedaf12a553156f39aeb524','a897833c84ca38eb9d6c06553db9211f','dc17876a3a9ae7401065fc12c074089b','4dff1d0c21ffed9c41c460d43f855630','f1e2739b8c52073f9266a036aa93bd52','b35b4ffe25682ffd5899e5dffb39cb68','bc97cc66c3f4038cd0e9582f6a66ec69','07165d4a31e8d35df421c9d6c4ae450f','97db754defe078d12cd35d28de61c04a','c5d9be0fe1125565a14587328a25f06b','766c100383651fe8fb408dcaeabca2d0','ad7eb65e45d145446eafde6779d5695f'])
         self.nodes = defaultdict(dict)
-        print(len(self.attack_process))
+        # print(len(self.attack_process))
         #
     def graph_add_node_mgr(self, row, key, event_type):
         self.lock.acquire()
@@ -148,7 +148,7 @@ class ProvGraph(object):
             if origion != node:
                 self.taylor_map[origion] = node
                 relabel_dic[origion] = node
-        print(len(relabel_dic))
+        # print(len(relabel_dic))
         self.G = nx.relabel_nodes(self.G, relabel_dic,copy=False)
         update_node_list = list(update_node_list)
         for i,node in enumerate(update_node_list):
@@ -214,18 +214,18 @@ class ProvGraph(object):
         # update_node_list = update_node_list - remove_list
 
 
-        print('update_list ', len(update_node_list))
+        # print('update_list ', len(update_node_list))
         
         self.filtered |= set(update_node_list)
 
         # node_centrality = nx.eigenvector_centrality(self.G,max_iter=200,tol = 1e-2)
 
-        connected_graph_list = self.propagation(update_node_list)
+        connected_graph_list = nx.algorithms.approximation.steiner_tree(self.G, update_node_list, weight='weight')
         # for i in connected_graph_list:
         #     print(i.graph['score'],i.nodes())
-        print('propagation finished')
+        # print('propagation finished')
         self.update_cache(connected_graph_list,topK)
-        print('update finished')
+        # print('update finished')
         self.thread_lock.release()
     
 
@@ -419,7 +419,7 @@ class ProvGraph(object):
         # nodes = self.G.nodes()
         # have better way to find neighbor?
         undirected_G = self.G.to_undirected(as_view=True)
-        print(len(pnode))
+        # print(len(pnode))
         for node in pnode:
             neibor = list(undirected_G[node])
             # print(node)
@@ -433,7 +433,7 @@ class ProvGraph(object):
                         # tmp_dict.add(self.GetNodeAttr(nei))
                 # except Exception as e:
                 #     print(nei,self.GetNodeAttr(nei))
-        print('need_to_caculate',len(need_to_caculate))
+        # print('need_to_caculate',len(need_to_caculate))
 
         if len(need_to_caculate) == 0:
             return -1
@@ -483,11 +483,11 @@ class ProvGraph(object):
 
         update_node_list = set()
         VAE_list = set()
-        print(anomaly_cutoff)
+        print("anomaly_cutoff:", anomaly_cutoff)
         for node in anomaly_score:
             if anomaly_score[node] >= anomaly_cutoff:
                 VAE_list.add(node)
-        print('VAE: ',len(VAE_list))
+        # print('VAE: ',len(VAE_list))
 
         update_node_list = VAE_list
         for node in update_node_list:
@@ -674,7 +674,7 @@ class ProvGraph(object):
         score = [x.GetGraphScore() for x in merged_graph_list]
         if len(score) == 0:
             return 
-        print(score)
+        # print(score)
         # if len(score) < 3:
         #     self.graph_cache = merged_graph_list[:topK]
         #     return 

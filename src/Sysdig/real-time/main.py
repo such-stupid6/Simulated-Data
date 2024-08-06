@@ -54,7 +54,7 @@ def log_parser(q,dataset,anomaly_cutoff):
         # cnt += 1
         if log_line == "end":
             proGraph.thread_lock.acquire()
-            print("start_update")
+            # print("start_update")
             t = threading.Thread(target = proGraph.update,args=(anomaly_cutoff,))
             t.start()
             thread_list.append(t)
@@ -71,7 +71,7 @@ def log_parser(q,dataset,anomaly_cutoff):
         end_time = time.time()
         if end_time - start_time >= 10:
             proGraph.thread_lock.acquire()
-            print("start_update")
+            # print("start_update")
             t = threading.Thread(target = proGraph.update,args=(anomaly_cutoff,))
             t.start()
             thread_list.append(t)
@@ -93,13 +93,14 @@ def log_parser(q,dataset,anomaly_cutoff):
     for i in proGraph.node_set:
         if i in proGraph.attack_process and proGraph.nodes[i]['score']!=0:
             cnt += 1
-            print(i,proGraph.GetNodeName(i) , proGraph.nodes[i]['score'])
+            # print(i,proGraph.GetNodeName(i) , proGraph.nodes[i]['score'])
         elif i in proGraph.attack_process and proGraph.nodes[i]['score']==0:
-            print(i, proGraph.GetNodeName(i) , proGraph.nodes[i]['score'])
+            pass
+            # print(i, proGraph.GetNodeName(i) , proGraph.nodes[i]['score'])
 
     # for i in proGraph.attack_process:
     #     print('attack: ',i,proGraph.nodes[i]['score'])
-    print('rate: ', cnt/len(proGraph.attack_process))
+    # print('rate: ', cnt/len(proGraph.attack_process))
 
 
     cnt = 0
@@ -154,11 +155,12 @@ def log_parser(q,dataset,anomaly_cutoff):
         # g.graph.remove_nodes_from(removelist)
 
         if flag:
-            print(g.GetGraphScore(),'attack',tmp_hit,len(g.graph.nodes()))
+            # pr int(g.GetGraphScore(),'attack',tmp_hit,len(g.graph.nodes()))
             proGraph.hit |= tmp_hit
         if not flag:
             # sort(key = lambda x: x.graph['score'],reverse = True)
-            print(g.GetGraphScore(),'benign',len(g.graph.nodes()))
+            # print(g.GetGraphScore(),'benign',len(g.graph.nodes()))
+            pass
         
         result_graph = ''
         max_len = 0
@@ -173,11 +175,11 @@ def log_parser(q,dataset,anomaly_cutoff):
         nx.drawing.nx_pydot.write_dot(result_graph, '../' + dataset + '/dot/' + str(cnt) + '.dot')
         cnt += 1
     print("recall: ",len(proGraph.hit)/len(proGraph.attack_process))
-    print(set(proGraph.attack_process) - proGraph.hit)
+    # print(set(proGraph.attack_process) - proGraph.hit)
     x = set(proGraph.attack_process) - proGraph.hit
     for i in x:
         print(proGraph.GetNodeName(i))
-    print(len(proGraph.node_set),len(proGraph.filtered))
+    # print(len(proGraph.node_set),len(proGraph.filtered))
     out_process = open('../' + dataset + '/detected-process.txt','w')
     for i in proGraph.filtered:
         if i in proGraph.attack_process:
@@ -219,5 +221,5 @@ if __name__ == "__main__":
     
     
     end_time = time.time()
-    print(end_time-start_time)
+    print("time used:", end_time-start_time)
 
