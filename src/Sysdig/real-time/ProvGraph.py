@@ -220,7 +220,21 @@ class ProvGraph(object):
 
         # node_centrality = nx.eigenvector_centrality(self.G,max_iter=200,tol = 1e-2)
 
-        connected_graph_list = nx.algorithms.approximation.steiner_tree(self.G, update_node_list, weight='weight')
+        # 这是使用propagation获取子图的方法，通过深度限制10，前向后向传播，获取子图
+        # connected_graph_list = self.propagation(update_node_list)
+        # 使用自带的STP算法
+        # 这里的self.G是有向无权图，所以weight要被设置为None，同时要转为无向图
+        # 但是存在update_node_list中的节点不在转化来的无向图中，why？
+        # 是因为self.G是一个局部的图？
+        print(len(update_node_list),"update node list:",update_node_list)
+
+        connected_graph_list = self.propagation(update_node_list)
+        print(len(connected_graph_list),"connected graph list", connected_graph_list)
+        
+        G_undirected = self.G.to_undirected()
+        nx_stpset = list(nx.algorithms.approximation.steiner_tree(G_undirected, update_node_list, weight=None))
+        print(len(nx_stpset), "nx stp set:", nx_stpset)
+
         # for i in connected_graph_list:
         #     print(i.graph['score'],i.nodes())
         # print('propagation finished')
